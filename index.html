@@ -74,7 +74,7 @@
 <! wasteDIV for waste message background is transparent  --->
 <div id="wasteDIV" style="display:none; position:relative; z-index: 10; border: 2px solid lightblue; border-radius: 12px; background-color: rgba(255, 255, 255, 0.9); margin: 0 auto; width: 45%;text-align: center;" >
 <p>If the new tab does not popup, click the button to open a new tab to see more information on waste disposal facilities.</p>
-<button onclick="openInNewTab()" style="display: inline; color:blue;font-size:16px;" >open new tab</button>
+<button onclick="openInNewTab(100)" style="display: inline; color:blue;font-size:16px;" >open new tab</button>
 </div>
 
  <!-- iframe div for tap water. -->
@@ -90,9 +90,9 @@ const wasteDIV = document.getElementById('wasteDIV');
 var zipcode ="";
 var isValidZip = false;
 var wasteLink = "https://www.google.com/maps/search/waste+recycle";
-function openInNewTab() {
+function openInNewTab(delay = 100) {
  setTimeout(function(){
-  window.open(wasteLink, '_blank').focus(); }, 2000);
+  window.open(wasteLink, '_blank').focus(); }, delay);
 }
 
 //====== Generate token: the token is required for access Google API. The token generating aligorithm is coppied from early Google lesson.
