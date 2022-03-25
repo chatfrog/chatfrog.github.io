@@ -5,8 +5,26 @@ h1 { font-family: Papyrus, fantasy; color: #7e2ea0;   text-align: center; }
 /*
 https://codepen.io/graygilmore/pen/KwKmve/8d8b41ed278d061764b3df531223a0e1
 */
+
 .gogogo {
   animation: tumble 30s linear;
+}
+@keyframes tumble {
+  0% {
+        -webkit-transform: translateY(0px);
+            transform: translateY(0px);
+  }
+
+  2%,
+  98% {
+    -webkit-transform: translateY(-300px);
+         transform: translateY(-300px);
+  }
+
+  100% {
+    -webkit-transform: translateY(0px);
+            transform: translateY(0px);
+  }
 }
 
 /*
