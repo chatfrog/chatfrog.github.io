@@ -7,7 +7,6 @@
 	<link rel="icon" href="data:,"> <!-- empty icon image (favicon.ico)  -->
 	<link rel="stylesheet" href="AItalk.css">	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/8.0.4/jsrsasign-all-min.js"></script>
-
     <title>smart Frog  environmental  robot</title>
   </head>
 
@@ -83,7 +82,6 @@
 <iframe id ="iframe1" src=" " style="border:none;  z-index: 300;" height="2000" width="100%" title="Query Result"></iframe>
 </div>
 
-
 <script>
 
 var iframe1 = document.querySelector('#iframe1');
@@ -134,13 +132,9 @@ var languageCode = 'en-US';
 			headers: {
 				"Accept": "application/json, text/plain, */*",
                 "Content-Type": "application/json",
-
                 "Authorization": "Bearer " + token,
-
             },
-
             body: JSON.stringify(input_data)
-
         });
 
 	 const data = await response.json();
@@ -233,14 +227,11 @@ var languageCode = 'en-US';
 	 void wasteDIV.offsetWidth; //triggering a DOM reflow
 	 wasteDIV.classList.add("gogogo");  //wasteDIV slide up pause and slide down.
 	 openInNewTab(3000);
-
 	 break;
 	 }
 	}
-
 	speak(data.queryResult.fulfillmentText); //speak out text from dialogflow
 };
-//
 
 var frogDIV = document.querySelector("#frogDIV");
 var frogSVG =  frogDIV.querySelector("svg");
@@ -253,8 +244,7 @@ frogSVG.onanimationend = (event) => { // remove animation for next time trigger
     console.log('Animation bounce ended');
 	event.stopPropagation();
     frogSVG.classList.remove('bounce-in-top');
-	 };
-	 
+	 };	 
 lipsPath.classList.add("movingLips"); // change iteration number(0 or infinite) to start or stop animation
 	//
 var inputText = document.querySelector("#inputText");
@@ -263,8 +253,7 @@ var clickStop = true;
 var listening= false;
 var speaking= false;
 
-// Using web speech API.
-// refer to https://www.section.io/engineering-education/speech-recognition-in-javascript/
+// Using web speech API.refer to https://www.section.io/engineering-education/speech-recognition-in-javascript/
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition; //webkitSpeechRecognition is for old browser
 const recognition = new SpeechRecognition();
 
@@ -286,7 +275,6 @@ const onResult = event => {
             }
 		sendRecogitionText(recogitionText); // send to dialogflow
           };
-
 recognition.continuous = false;
 recognition.addEventListener("result", onResult);
 // end of speech  recognition.
@@ -312,7 +300,6 @@ if (typeof SpeechRecognition == "undefined") { //check if the browser support sp
 var recogitionText ="";
 	const sendRecogitionText = (order) => {
 	console.log("function get order:" + order);
-
 	let query =order;
 	let query_data = {"queryInput": {"text": {"text":query,"languageCode":"en-US"}}};
 	console.log("query:" + query_data );
@@ -397,7 +384,7 @@ function enterPressed(event) { //key pressed event
          console.log("Enter key is pressed");
 		 sendText(); // send text to dialogflow
       } 
-   }
+   }  
    
 //The followings are messages to be spoken by click menu items.
 const howtouse = " To start, click hazardous waste or water pollution to learn more about these topics. When clicking the start listening option, you can ask me about where to dispose harmful trash or what quality your local tap water is. You can also type your question in the chat box and click send out if your microphone is experiencing difficulties. And if you're a new user, don't forget to click introduction. Have fun! ";
