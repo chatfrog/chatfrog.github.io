@@ -7,7 +7,7 @@ https://codepen.io/graygilmore/pen/KwKmve/8d8b41ed278d061764b3df531223a0e1
 */
 
 .gogogo {
-  animation: tumble 30s linear;
+  animation: tumble 12s linear;
 }
 @keyframes tumble {
   0% {
@@ -15,8 +15,8 @@ https://codepen.io/graygilmore/pen/KwKmve/8d8b41ed278d061764b3df531223a0e1
             transform: translateY(0px);
   }
 
-  2%,
-  98% {
+  12%,
+  95% {
     -webkit-transform: translateY(-300px);
          transform: translateY(-300px);
   }
