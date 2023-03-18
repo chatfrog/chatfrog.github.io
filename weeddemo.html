@@ -31,13 +31,19 @@ button {
 
 <div id="dataInput" style="display: none;">
     <p id="DeviceName"> </p>
-    <button id="startButton" value="Start" onclick = "sendCode(getThisValue(this))">Start</button> <br><br>
+
+	<button id="Servo1" value="Servo1" onclick = "sendCode(getThisValue(this))">Servo Rotate</button> <br><br>
+	<button id="Pump" value="Pump" onclick = "sendCode(getThisValue(this))">Start Pump</button> <br><br>
+	<button id="stopPump" value="stopPump" onclick = "sendCode(getThisValue(this))">Stop Pump</button> <br><br>
+	  <P > USE BEWARE: The wheels are extremely powerful, as they were designed to move in uneven terrain. Please hold the robot if you want to try the buttons below.    </p>
+	<button id="startButton" value="Start" onclick = "sendCode(getThisValue(this))">Start</button> <br><br>
 	<button id="stopButton" value="Stop" onclick = "sendCode(getThisValue(this))">Stop</button><br><br>
 	<button id="leftButton" value="Left" onclick = "sendCode(getThisValue(this))">Left</button> <br><br>
 	<button id="rightButton" value="Right" onclick = "sendCode(getThisValue(this))">Right</button> <br><br>
-	<button id="Servo1" value="Servo1" onclick = "sendCode(getThisValue(this))">Servo1</button> <br><br>
-	<button id="Pump" value="Pump" onclick = "sendCode(getThisValue(this))">Start Pump</button> <br><br>
-	<button id="stopPump" value="stopPump" onclick = "sendCode(getThisValue(this))">Stop Pump</button> <br><br>
+	<button id="backButton" value="Back" onclick = "sendCode(getThisValue(this))">Back</button> <br><br>
+	<button id="Move01" value="Move01" onclick = "sendCode(getThisValue(this))">Move01</button> <br><br>
+    <button id="Back01" value="Back01" onclick = "sendCode(getThisValue(this))">Back01</button> <br><br>
+	
 </div>
 </br>
 <pre id = "log"></pre>
