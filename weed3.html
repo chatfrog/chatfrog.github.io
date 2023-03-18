@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<!-- https://github.com/marcellus00/ESP32_BLE_Button/blob/master/BlePortal/index.html  works well-->
+<!--  a more concise version plus disconnect button for teaching      -->
+<html>
+<head>
+  <meta charset="utf-8">
+
+</head>
+<style>
+button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 76px;
+  margin: 4px 20px;
+  cursor: pointer;
+}
+</style>
+<body>
+<button id="connect" onclick = "onDevice()">Select device</button>
+<label id = "deviceName"></label>
+</br>
+<pre id = "data"></pre>
+</br>
+<button onclick = "onDisconnectButtonClick()">Disconnect</button>
+</br>
+
+<div id="dataInput" style="display: none;">
+    <p id="DeviceName"> </p>
+    <button id="startButton" value="Start" onclick = "sendCode(getThisValue(this))">Start</button> <br><br>
+	<button id="backButton" value="Back" onclick = "sendCode(getThisValue(this))">Back</button> <br><br>
+	<button id="stopButton" value="Stop" onclick = "sendCode(getThisValue(this))">Stop</button><br><br>
+    <button id="ServoLeft" value="ServoLeft" onclick = "sendCode(getThisValue(this))">ServoLeft</button> <br><br>
+	<button id="ServoRight" value="ServoRight" onclick = "sendCode(getThisValue(this))">ServoRight</button> <br><br>
+	<button id="Pump" value="Pump" onclick = "sendCode(getThisValue(this))">Start Pump</button> <br><br>
+	<button id="stopPump" value="stopPump" onclick = "sendCode(getThisValue(this))">Stop Pump</button> <br><br>
+	<button id="Move01" value="Move01" onclick = "sendCode(getThisValue(this))">Move01</button> <br><br>
+	<button id="Move03" value="Move03" onclick = "sendCode(getThisValue(this))">Move03</button> <br><br>
+	<button id="Move04" value="Move04" onclick = "sendCode(getThisValue(this))">Move04</button> <br><br>
+	<button id="Move05" value="Move05" onclick = "sendCode(getThisValue(this))">Move05</button> <br><br>
+	<button id="Move8" value="Move8" onclick = "sendCode(getThisValue(this))">Move8</button> <br><br>
+    <button id="back01" value="Back01" onclick = "sendCode(getThisValue(this))">Back01</button> <br><br>	
+	<button id="back02" value="Back02" onclick = "sendCode(getThisValue(this))">Back02</button> <br><br>	
+	<button id="leftButton" value="Left" onclick = "sendCode(getThisValue(this))">Left</button> <br><br>
+	<button id="rightButton" value="Right" onclick = "sendCode(getThisValue(this))">Right</button> <br><br>
+</div>
+</br>
+<pre id = "log"></pre>
+  <script>
+const decoder = new TextDecoder('utf-8');
+
+const dataService = '5e87bd74-b350-4a6a-ae36-bb33e30499af';
+
+const dataCharacteristic = '2e550f9f-c882-467a-b35a-c7f12ecae2b3';
+
+var bleDevice = null;
+
+function onDevice()
+{
+	clearLog();
+	setDisabled("connect", true);	
+	setDisplay("dataInput", "none");
+	setContent("deviceName", "Connecting...");
+	return navigator.bluetooth.requestDevice(
+		{
+			acceptAllDevices: true,
+			optionalServices: [dataService]
+		})
+		.then(device => {
+			bleDevice = device;
+			setDisabled("connect", false);
+			setDisabled("startButton", false);
+			setDisplay("dataInput", "inline");
+			setContent("deviceName", "Device ID: " + bleDevice.id);
+			setValue("deviceName", bleDevice.name);
+			bleDevice.addEventListener('gattserverdisconnected', onDisconnected);
+		})
+		.then(any => readChar(dataCharacteristic, setData))
+		.catch(error => 
+			{
+				clearLog();
+				console.log(error.message)
+			});
+}
+
+function onDisconnected()
+{
+	clearLog();
+	log('Bluetooth Device disconnected');
+}
+
+function onDisconnectButtonClick() {
+  if (!bleDevice) {
+    return;
+  }
+  log('Disconnecting from Bluetooth Device...');
+  if (bleDevice.gatt.connected) {
+    bleDevice.gatt.disconnect();
+  } else {
+    log('> Bluetooth Device is already disconnected');
+  }
+}
+
+function setDisplay(id, display)
+{
+	document.getElementById(id).style.display = display;
+}
+
+function setDisabled(id, disabled)
+{
+	document.getElementById(id).disabled = disabled;
+}
+
+function setContent(id, text)
+{
+	document.getElementById(id).innerHTML = text;
+}
+
+function setValue(id, text)
+{
+	document.getElementById(id).value = text;
+}
+
+
+
+function getChar(characteristic)
+{	
+	return bleDevice.gatt.connect()
+	.then(server => server.getPrimaryService(dataService))
+	.then(service => service.getCharacteristic(characteristic))
+}
+
+function readChar(char, handle)
+{
+	return getChar(char)
+	.then(ch => ch.readValue()) // writeValue() or readValue() belong to charateristic servce.
+	.then(value => decoder.decode(value))
+	.then(result => handle(result));
+}
+
+/*
+function handleData(event)
+{
+	setData(decoder.decode(event.target.value));
+}
+*/
+
+function setData(value)
+{
+	return document.getElementById('data').innerHTML = value;
+}
+
+function getThisValue(theObject) {  //When using "this" as parameter, can get clicked button (object).
+	let encoder = new TextEncoder('utf-8');
+	let data = encoder.encode(theObject.value);
+	return data;
+}
+
+function sendCode(data)
+{
+
+	console.log("Data:",data);
+	getChar(dataCharacteristic)   //parameter is bluetooth's Chracteristic UUID, connect via bluetooth, and get chracteristic servic.
+	.then(ch => ch.writeValue(data))  // writeValue() or readValue() belong to charateristic servce.
+	.catch(error => console.log(error));
+}
+
+function log() {
+	var line = Array.prototype.slice.call(arguments).map(function (argument) {
+			return typeof argument === 'string' ? argument : JSON.stringify(argument);
+		}).join(' ');
+	
+	document.querySelector('#log').textContent += line + '\n';
+}
+
+function clearLog() {
+	document.querySelector('#log').textContent = '';
+	setData('');
+	setContent("deviceName", "");
+	setDisplay("dataInput", "none");
+	setDisabled("connect", false);
+}
+  </script>
+</body>
+</html>
