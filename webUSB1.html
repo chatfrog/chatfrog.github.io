@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!-- https://gist.github.com/FeedDahBirds/98301084ce13898fa72c610f211e1e76    not work-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>esptool.js</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/2.9.2/xterm.min.js" ></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/2.9.2/xterm.min.css"  />
+</head>
+
+<body>
+  <h1>esptool.js</h1>
+  <button id="flash-button" style="padding: 30px; font-size: 40px">Flash</button>
+  <div id="serial"></div>
+
+  <script src="ESP32webUSB.js"></script>
+  <script>
+    const term = new Terminal()
+    term.open(document.querySelector("#serial"))
+    document.querySelector("#flash-button").addEventListener("click", () => {
+      const esp = new Esptool()
+      esp.connect().then(() => {
+        const receive = () => {
+          esp.serial.read().then(data => {	  
+		    console.log("when read:")
+            const s = String.fromCharCode.apply(null, new Uint8Array(data))
+			console.log("before write:")
+			console.log(s)
+            term.write(s)
+            receive()
+          })
+        }
+        receive()
+      })
+    })
+  </script>
+</body>
+</html>
