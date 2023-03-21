@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+	  
+.wrapper {
+    width: 60%;
+    margin: 0 auto;
+}
+#input {
+    width: 100%;
+}
+
+#log {
+    height: 80vh;
+    width: 100%;
+    overflow: scroll;
+    background-color: black;
+    color:white;
+    white-space: pre;
+}
+
+.hidden {
+    display: none;
+}
+	</style>
+	
+</head>
+
+<body>
+    <div class="wrapper">
+        <div id="notSupported">Sorry, Web Serial is not supported on this device, make sure you're running Chrome 78 or
+            later and have enabled the #enable-experimental-web-platform-features flag in chrome://flags</div>
+        <div>
+            <button id="connect" onClick="connect()">Connect</button>
+        </div>
+        <div id="log"></div>
+        <div>
+            <input id="input" type="text" onKeyPress="handle(event)" disabled />
+            <button id="sendButton" onClick="send()" disabled>Send</button>
+        </div>
+    </div>
+	
+    <script>
+	if ('serial' in navigator) {
+    const notSupported = document.getElementById('notSupported');
+    notSupported.classList.add('hidden');
+}
+
+const log = document.getElementById("log")
+
+
+function send() {
+    const toSend = document.getElementById("input").value
+    writeToStream(toSend)
+    document.getElementById("input").value = ""
+
+}
+
+function handle(e) {
+    if (e.keyCode === 13) {
+        e.preventDefault();
+        send();
+    }
+}
+
+async function connect() {
+    const inputField = document.getElementById("input");
+    inputField.disabled = false;
+    inputField.focus();
+    inputField.select();
+    document.getElementById("sendButton").disabled = false;
+    document.getElementById("connect").disabled = true;
+
+    port = await navigator.serial.requestPort();
+    // - Wait for the port to open.
+    await port.open({ baudRate: 15200 });
+    console.log('Open');
+
+
+
+    let decoder = new TextDecoderStream();
+    inputDone = port.readable.pipeTo(decoder.writable);
+    inputStream = decoder.readable;
+
+    const encoder = new TextEncoderStream();
+    outputDone = encoder.readable.pipeTo(port.writable);
+    outputStream = encoder.writable;
+
+    reader = inputStream.getReader();
+    readLoop();
+}
+
+function writeToStream(line) {
+    const writer = outputStream.getWriter();
+    console.log('[SEND]', line);
+    writer.write(line + '\r');
+    writer.releaseLock();
+}
+
+async function readLoop() {
+    console.log('Readloop');
+
+    while (true) {
+        const { value, done } = await reader.read();
+        console.log('value', value);
+        console.log('done', done);
+
+
+        if (value) {
+            log.textContent += value;
+            log.scrollTop = log.scrollHeight;
+        }
+        if (done) {
+            console.log('[readLoop] DONE', done);
+            reader.releaseLock();
+            break;
+        }
+    }
+}
+	</script>
+</body>
+
+</html>
